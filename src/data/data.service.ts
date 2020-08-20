@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Data } from './data.model';
+import { Data, Book } from './data.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose'
 
@@ -60,7 +60,42 @@ export class DataService {
           throw new NotFoundException('Could not find such data.');
         }
       }
-    
+
+      async addBookAtId(id: string, book:Book){
+        const updatedData = await this.findData(id);
+        updatedData.books.push(book)
+        updatedData.save();
+      }
+
+      async updateBookAtId(id: string, book:Book){
+        const updatedData = await this.findData(id);
+        const books = updatedData.books
+        //console.log(updatedData,'lol',updatedData.books, 'lll', books, book)
+        for(var i = books.length-1; i>=0 ; i--){ 
+          //console.log(books[i],'x',books[0].title)
+          if(books[i].title == book.title){
+            books[i].genre = book.genre
+            break;
+          }
+        }
+        console.log(books) 
+        updatedData.books = books 
+        updatedData.save();
+      }
+
+      
+      async deleteBookAtId(id: string, title:string){
+        const updatedData = await this.findData(id);
+        const books = updatedData.books
+        for(var i = books.length-1; i>=0 ; i--){
+          if(books[i].title === title){
+            books.splice(i,1)
+          }
+        }
+        updatedData.books = books
+        updatedData.save();
+      } 
+
       private async findData(id: string): Promise<Model<Data>> {
         let data;
         try {

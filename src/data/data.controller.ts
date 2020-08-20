@@ -1,5 +1,7 @@
 import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
 import { DataService } from './data.service';
+import { Book, BookSchema } from './data.model';
+import { Model } from 'mongoose'
 
 @Controller('/data')
 export class DataController {
@@ -42,8 +44,39 @@ async addData(
     return null;
   }
 
+  @Patch('/addbook')
+  async addBookAtId(
+    @Body('id') id: string,
+    @Body('title') title: string,
+    @Body('genre') genre: string,
+  ) {
+    const book= {title:title,genre:genre}
+    await this.dataService.addBookAtId(id, book);
+    return null;
+  }
+
+  @Patch('/updatebook')
+  async updateBookAtId(
+    @Body('id') id: string,
+    @Body('title') title: string,
+    @Body('genre') genre: string,
+  ) {
+    const book= {title:title,genre:genre}
+    await this.dataService.updateBookAtId(id, book);
+    return null;
+  }
+
+  @Patch('/delbook')
+  async deleteBookAtId(
+    @Body('id') id: string,
+    @Body('title') title: string,
+  ) {
+    await this.dataService.deleteBookAtId(id, title);
+    return null;
+  }
+
   @Delete('/delete')
-  async daleteData(@Body('id') dataId: string) {
+  async deleteData(@Body('id') dataId: string) {
       await this.dataService.deleteData(dataId);
       return null;
   }
