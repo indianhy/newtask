@@ -22,8 +22,8 @@ export const BookSchema = new mongoose.Schema({
   
   export interface Data extends mongoose.Document {
     id: string;
-    username:string
-    password:string
+    username:string;
+    password:string;
     name: string;
     address: string;
     age: number;

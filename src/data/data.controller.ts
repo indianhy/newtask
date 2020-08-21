@@ -1,7 +1,9 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete, UseGuards } from '@nestjs/common';
 import { DataService } from './data.service';
+import { AuthGuard } from '@nestjs/passport'
 import { Book, BookSchema } from './data.model';
 import { Model } from 'mongoose'
+import { from } from 'rxjs';
 
 @Controller('/data')
 export class DataController {
@@ -9,12 +11,17 @@ export class DataController {
 constructor(private readonly dataService: DataService) {}
 
 @Post('/add')
+@UseGuards(AuthGuard('jwt'))
 async addData(
-    @Body('name') name: string,
-    @Body('address') address: string,
-    @Body('age') age: number,
+  @Body('username') username: string,
+  @Body('password') password: string,
+  @Body('name') name: string,
+  @Body('address') address: string,
+  @Body('age') age: number,
   ) {
     const generatedId = await this.dataService.addData(
+      username,
+      password,
       name,
       address,
       age,
@@ -29,11 +36,13 @@ async addData(
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   getData(@Param('id') dataId: string) {
     return this.dataService.getSingleData(dataId);
   }
 
   @Patch('/update')
+  @UseGuards(AuthGuard('jwt'))
   async updateData(
     @Body('id') id: string,
     @Body('name') name: string,
@@ -45,6 +54,7 @@ async addData(
   }
 
   @Patch('/addbook')
+  @UseGuards(AuthGuard('jwt'))
   async addBookAtId(
     @Body('id') id: string,
     @Body('title') title: string,
@@ -56,6 +66,7 @@ async addData(
   }
 
   @Patch('/updatebook')
+  @UseGuards(AuthGuard('jwt'))
   async updateBookAtId(
     @Body('id') id: string,
     @Body('title') title: string,
@@ -67,6 +78,7 @@ async addData(
   }
 
   @Patch('/delbook')
+  @UseGuards(AuthGuard('jwt'))
   async deleteBookAtId(
     @Body('id') id: string,
     @Body('title') title: string,
@@ -76,6 +88,7 @@ async addData(
   }
 
   @Delete('/delete')
+  @UseGuards(AuthGuard('jwt'))
   async deleteData(@Body('id') dataId: string) {
       await this.dataService.deleteData(dataId);
       return null;

@@ -10,8 +10,10 @@ export class DataService {
         @InjectModel('Data') private readonly dataModel: Model<Data>,
       ) {}
 
-      async addData(name: string, address: string, age: number) {
+      async addData(username:string,password: string, name: string, address: string, age: number) {
         const newData = new this.dataModel({
+          username,
+          password,
           name,
           address,
           age,
@@ -53,7 +55,8 @@ export class DataService {
         }
         updatedData.save();
       }
-    
+
+
       async deleteData(id: string) {
         const result = await this.dataModel.deleteOne({_id: id});
         if (result.n === 0) {
